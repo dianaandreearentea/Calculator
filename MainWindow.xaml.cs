@@ -1,13 +1,5 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Calculator
 {
@@ -16,7 +8,6 @@ namespace Calculator
     /// </summary>
     public partial class MainWindow : Window
     {
-        string expresieMatematica = "";
         public MainWindow()
         {
             InitializeComponent();
@@ -99,7 +90,7 @@ namespace Calculator
             else
             {
                 MessageBox.Show("Expresie matematica necunoscuta sau gresita!", "Eroare", MessageBoxButton.OK, MessageBoxImage.Error);
-                
+
                 // Resetam ecranul
                 Ecran.Text = "";
 
