@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Data;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Calculator
@@ -13,15 +14,25 @@ namespace Calculator
             InitializeComponent();
         }
 
-        private void AdaugaLaExpresiaMatematica(object sender, RoutedEventArgs e)
+        void AdaugaLaExpresiaMatematica(object sender, RoutedEventArgs e)
         {
             Button buton = sender as Button;
             string valoareButon = buton.Content.ToString();
-
             Ecran.Text = Ecran.Text + valoareButon; // Ecran.Text += valoare;
         }
 
-        private void Calculeaza(object sender, RoutedEventArgs e)
+        void Sterge(object sender, RoutedEventArgs e)
+        {
+            Ecran.Text = "";
+        }
+        void afisareEroare(string mesaj)
+        {
+            MessageBox.Show(mesaj, "Eroare", MessageBoxButton.OK, MessageBoxImage.Error);
+            Ecran.Text = "";
+        }
+
+
+        void Calculeaza(object sender, RoutedEventArgs e)
         {
             double a, b;
             string expresie = Ecran.Text;
@@ -42,9 +53,9 @@ namespace Calculator
                 b = double.Parse(parti[1]);
                 rezultat = a - b;
             }
-            else if (expresie.Contains("x"))
+            else if (expresie.Contains("*"))
             {
-                string[] parti = expresie.Split('x');
+                string[] parti = expresie.Split('*');
                 a = double.Parse(parti[0]);
                 b = double.Parse(parti[1]);
                 rezultat = a * b;
@@ -57,12 +68,7 @@ namespace Calculator
 
                 if (b == 0)
                 {
-                    MessageBox.Show("Nu se poate imparti la 0!", "Eroare", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    // Resetam ecranul
-                    Ecran.Text = "";
-
-                    // ne intoarcem din functie
+                    afisareEroare("Nu se poate imparti la 0!"); 
                     return;
                 }
 
@@ -78,23 +84,13 @@ namespace Calculator
 
                 if (b == 0)
                 {
-                    MessageBox.Show("Nu se poate imparti la 0, deci nu putem afla restul impartirii la 0!", "Eroare", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    // Resetam ecranul
-                    Ecran.Text = "";
-
-                    // ne intoarcem din functie
+                   afisareEroare("Nu se poate calcula restul impartirii la 0!");
                     return;
                 }
             }
             else
             {
-                MessageBox.Show("Expresie matematica necunoscuta sau gresita!", "Eroare", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                // Resetam ecranul
-                Ecran.Text = "";
-
-                // ne intoarcem din functie
+               afisareEroare("Expresie matematica invalida!");
                 return;
             }
 
@@ -102,9 +98,25 @@ namespace Calculator
             Ecran.Text = rezultat.ToString();
         }
 
-        private void Sterge(object sender, RoutedEventArgs e)
+
+        private void CalculeazaExpresie(object sender, RoutedEventArgs e)
         {
-            Ecran.Text = "";
+            string expresie = Ecran.Text;
+            try
+            {
+                var rezultat = new DataTable().Compute(expresie, "");
+                Ecran.Text = rezultat.ToString();
+            }
+            catch (SyntaxErrorException)
+            {
+                afisareEroare("Expresie matematica invalida!");
+                return;
+            }
+            catch (EvaluateException ex)
+            {
+                afisareEroare(ex.Message);
+                return;
+            }
         }
     }
 }
